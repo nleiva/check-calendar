@@ -22,7 +22,7 @@ Go to the following link in your browser then type the authorization code:
 
 ## Go Time
 
-Temporary [Example](https://play.golang.org/p/oxhy6pKSZCV)
+Temporary [Example](https://play.golang.org/p/cmb-E0Njf8p)
 
 ```go
 package main
@@ -47,9 +47,17 @@ func main() {
 
 	t1, err := time.Parse(time.RFC3339, "2020-08-31T18:44:52Z")
 	if err != nil {
-		fmt.Println("Oops")
+		fmt.Println("Oops 1")
 	}
-	fmt.Printf("%v", t1)
+	t2:= t1.Add(1 * time.Minute)
+	
+	t2b, err := t2.MarshalText()
+	
+	if err != nil {
+		fmt.Println("Oops 2")
+	}
+	
+	fmt.Printf("%v", string(t2b))
 
 }
 ```
