@@ -74,11 +74,31 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
+// Determines the max time.
+func maxTime(min string) (string, error) {
+	t1, err := time.Parse(time.RFC3339, min)
+	if err != nil {
+		return "", fmt.Errorf("Unable to parse the time: %v", err)
+	}
+	// Change to minutes
+	t2 := t1.Add(1 * time.Hour)
+	t2b, err := t2.MarshalText()
+	if err != nil {
+		return "", fmt.Errorf("Unable to add the delta: %v", err)
+	}
+	return string(t2b), nil
+}
+
 func main() {
 	// INPUTS
-	min := "2020-08-31T18:44:00Z"
-	max := "2020-08-31T23:44:00Z"
 	name := "primary"
+	// or min := time.Now()
+	min := "2020-08-31T18:44:00Z"
+
+	max, err := maxTime(min)
+	if err != nil {
+		log.Fatalf("Unable to determine end of time range: %v", err)
+	}
 
 	b, err := ioutil.ReadFile("desktop.json")
 	if err != nil {
@@ -126,22 +146,22 @@ func main() {
 		}
 	}
 
-	t := time.Now().Format(time.RFC3339)
-	events, err := srv.Events.List("primary").ShowDeleted(false).
-		SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
-	if err != nil {
-		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
-	}
-	fmt.Println("Upcoming events:")
-	if len(events.Items) == 0 {
-		fmt.Println("No upcoming events found.")
-	} else {
-		for _, item := range events.Items {
-			date := item.Start.DateTime
-			if date == "" {
-				date = item.Start.Date
-			}
-			fmt.Printf("%v (%v)\n", item.Summary, date)
-		}
-	}
+	// t := time.Now().Format(time.RFC3339)
+	// events, err := srv.Events.List("primary").ShowDeleted(false).
+	// 	SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
+	// if err != nil {
+	// 	log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
+	// }
+	// fmt.Println("Upcoming events:")
+	// if len(events.Items) == 0 {
+	// 	fmt.Println("No upcoming events found.")
+	// } else {
+	// 	for _, item := range events.Items {
+	// 		date := item.Start.DateTime
+	// 		if date == "" {
+	// 			date = item.Start.Date
+	// 		}
+	// 		fmt.Printf("%v (%v)\n", item.Summary, date)
+	// 	}
+	// }
 }
