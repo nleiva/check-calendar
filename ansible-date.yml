@@ -1,0 +1,19 @@
+---
+- name: Test time format
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+    # "ansible_date_time.date": "2020-08-31"
+    - name: Print the date
+      debug:
+        var: ansible_date_time.date
+ 
+    #"ansible_date_time.iso8601": "2020-08-31T18:44:52Z"
+    #If the time is in UTC, add a Z directly after the time without a space. Z is the zone designator for the zero UTC offset. 
+    - name: Print the time (ISO 8601)
+      debug:
+        var: ansible_date_time.iso8601
+
+
+# 2020-08-27T08:00:00-0800
