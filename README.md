@@ -1,6 +1,6 @@
 # Check Calendar
 
-Simple app to versify if a timeslot is busy or not.
+Simple app to verify if a timeslot is busy or not.
 
 ## Requirements
 
@@ -9,55 +9,23 @@ go get -u google.golang.org/api/calendar/v3
 go get -u golang.org/x/oauth2/google
 ```
 
-## Run it
+### 
 
-First time you run it
+You need to [Turn on the Google Calendar API](https://developers.google.com/calendar/quickstart/go#step_1_turn_on_the) and download your OAuth 2.0 client credentials (json file) from [API Credentials](https://console.developers.google.com/apis/credentials) as in the image below.
 
-```bash
-$ go run main.go
-Go to the following link in your browser then type the authorization code: 
-<https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=...>
-<PASTE CODE>
-```
+<p align="center">
+  <img title="API Console" src="static/API.JPG"><br>
+  <br>
+</p>
 
-## Go Time
+## Test 
 
-Temporary [Example](https://play.golang.org/p/cmb-E0Njf8p)
+Execute `go run *.go args.json`, where `args.json` is something like:
 
-```go
-package main
 
-import (
-	"fmt"
-	"time"
-)
-
-func main() {
-
-	today := time.Now()
-	plusOne := today.Add(1 * time.Minute)
-
-	// Using time.Before() method
-	g1 := today.Before(plusOne)
-	fmt.Println("today before plusOne:", g1)
-
-	// Using time.After() method
-	g2 := plusOne.After(today)
-	fmt.Println("plusOne after today:", g2)
-
-	t1, err := time.Parse(time.RFC3339, "2020-08-31T18:44:52Z")
-	if err != nil {
-		fmt.Println("Oops 1")
-	}
-	t2:= t1.Add(1 * time.Minute)
-	
-	t2b, err := t2.MarshalText()
-	
-	if err != nil {
-		fmt.Println("Oops 2")
-	}
-	
-	fmt.Printf("%v", string(t2b))
-
+```json
+{
+    "Name": "Test",
+    "Time":  "2020-09-01T19:50:00Z"
 }
 ```
