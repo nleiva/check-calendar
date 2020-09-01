@@ -18,7 +18,22 @@ You need to [Turn on the Google Calendar API](https://developers.google.com/cale
   <br>
 </p>
 
-## Test 
+That is the file we read as `desktop.json`.
+
+```go
+	b, err := ioutil.ReadFile("desktop.json")
+	if err != nil {
+		return false, fmt.Errorf("Unable to read client secret file: %v", err)
+	}
+```
+
+## Compile
+
+Simply: `go build -o library/calendar *.go`
+
+## Testing
+
+### Manually
 
 Execute `go run *.go args.json`, where `args.json` is something like:
 
@@ -28,4 +43,20 @@ Execute `go run *.go args.json`, where `args.json` is something like:
     "Name": "Test",
     "Time":  "2020-09-01T19:50:00Z"
 }
+```
+
+### From Ansible
+
+Execute: `ansible-playbook test-module.yml `.
+
+```yaml
+- name: Test Calendar module
+  hosts: localhost
+  gather_facts: yes
+
+    tasks:
+    - name: Print the time (ISO 8601)
+      calendar:
+        name: Testing the Calendar module
+        time: "{{ ansible_date_time.iso8601 }}"
 ```
