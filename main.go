@@ -1,167 +1,100 @@
 /**
- * Most of this file is borrowed from: https://developers.google.com/calendar/quickstart/go
+ * Most of this file is borrowed from: https://gist.github.com/sivel/ccd81bdfb31ca0c0e05d
  *
  */
+
 package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
 	"time"
-
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/calendar/v3"
 )
 
-// Retrieve a token, saves the token, then returns the generated client.
-func getClient(config *oauth2.Config) *http.Client {
-	// The file token.json stores the user's access and refresh tokens, and is
-	// created automatically when the authorization flow completes for the first
-	// time.
-	tokFile := "token.json"
-	tok, err := tokenFromFile(tokFile)
-	if err != nil {
-		tok = getTokenFromWeb(config)
-		saveToken(tokFile, tok)
-	}
-	return config.Client(context.Background(), tok)
+// ModuleArgs are the module inputs
+type ModuleArgs struct {
+	Name string
+	Time string
 }
 
-// Request a token from the web, then returns the retrieved token.
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
-	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+
-		"authorization code: \n%v\n", authURL)
-
-	var authCode string
-	if _, err := fmt.Scan(&authCode); err != nil {
-		log.Fatalf("Unable to read authorization code: %v", err)
-	}
-
-	tok, err := config.Exchange(context.TODO(), authCode)
-	if err != nil {
-		log.Fatalf("Unable to retrieve token from web: %v", err)
-	}
-	return tok
+// Response are the values returned from the module
+type Response struct {
+	Msg     string `json:"msg"`
+	Changed bool   `json:"changed"`
+	Failed  bool   `json:"failed"`
 }
 
-// Retrieves a token from a local file.
-func tokenFromFile(file string) (*oauth2.Token, error) {
-	f, err := os.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	tok := &oauth2.Token{}
-	err = json.NewDecoder(f).Decode(tok)
-	return tok, err
+// ExitJSON is ...
+func ExitJSON(responseBody Response) {
+	returnResponse(responseBody)
 }
 
-// Saves a token to a file path.
-func saveToken(path string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to: %s\n", path)
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatalf("Unable to cache oauth token: %v", err)
-	}
-	defer f.Close()
-	json.NewEncoder(f).Encode(token)
+// FailJSON is ...
+func FailJSON(responseBody Response) {
+	responseBody.Failed = true
+	returnResponse(responseBody)
 }
 
-// Determines the max time.
-func maxTime(min string) (string, error) {
-	t1, err := time.Parse(time.RFC3339, min)
+func returnResponse(responseBody Response) {
+	var response []byte
+	var err error
+	response, err = json.Marshal(responseBody)
 	if err != nil {
-		return "", fmt.Errorf("Unable to parse the time: %v", err)
+		response, _ = json.Marshal(Response{Msg: "Invalid response object"})
 	}
-	// Change to minutes
-	t2 := t1.Add(1 * time.Hour)
-	t2b, err := t2.MarshalText()
-	if err != nil {
-		return "", fmt.Errorf("Unable to add the delta: %v", err)
-	}
-	return string(t2b), nil
-}
-
-func main() {
-	// INPUTS
-	name := "primary"
-	// or min := time.Now()
-	min := "2020-08-31T18:44:00Z"
-
-	max, err := maxTime(min)
-	if err != nil {
-		log.Fatalf("Unable to determine end of time range: %v", err)
-	}
-
-	b, err := ioutil.ReadFile("desktop.json")
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
-	}
-
-	// If modifying these scopes, delete your previously saved token.json.
-	config, err := google.ConfigFromJSON(b, calendar.CalendarReadonlyScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-	client := getClient(config)
-
-	srv, err := calendar.New(client)
-	if err != nil {
-		log.Fatalf("Unable to retrieve Calendar client: %v", err)
-	}
-
-	cal := calendar.FreeBusyRequestItem{Id: name}
-
-	freebusyRequest := calendar.FreeBusyRequest{
-		TimeMin: min,
-		TimeMax: max,
-		Items:   []*calendar.FreeBusyRequestItem{&cal},
-	}
-
-	freebusyRequestCall := srv.Freebusy.Query(&freebusyRequest)
-
-	freebusyRequestResponse, err := freebusyRequestCall.Do()
-
-	if err != nil {
-		log.Fatalf("Unable to get a freebusyRequestResponse: %v", err)
-	}
-
-	b, err = freebusyRequestResponse.MarshalJSON()
-
-	fmt.Println("FreeBusy:")
-	if len(freebusyRequestResponse.Calendars[name].Busy) == 0 {
-		fmt.Println("No busy timeslots found.")
+	fmt.Println(string(response))
+	if responseBody.Failed {
+		os.Exit(1)
 	} else {
-		for _, item := range freebusyRequestResponse.Calendars[name].Busy {
-			start := item.Start
-			end := item.End
-			fmt.Printf("From: %v To: %v\n", start, end)
-		}
+		os.Exit(0)
+	}
+}
+
+// Temp: "go run main.go args.json"
+func main() {
+	var response Response
+
+	if len(os.Args) != 2 {
+		response.Msg = "No argument file provided"
+		FailJSON(response)
 	}
 
-	// t := time.Now().Format(time.RFC3339)
-	// events, err := srv.Events.List("primary").ShowDeleted(false).
-	// 	SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
-	// if err != nil {
-	// 	log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
-	// }
-	// fmt.Println("Upcoming events:")
-	// if len(events.Items) == 0 {
-	// 	fmt.Println("No upcoming events found.")
-	// } else {
-	// 	for _, item := range events.Items {
-	// 		date := item.Start.DateTime
-	// 		if date == "" {
-	// 			date = item.Start.Date
-	// 		}
-	// 		fmt.Printf("%v (%v)\n", item.Summary, date)
-	// 	}
-	// }
+	argsFile := os.Args[1]
+
+	text, err := ioutil.ReadFile(argsFile)
+	if err != nil {
+		response.Msg = "Could not read configuration file: " + argsFile
+		FailJSON(response)
+	}
+
+	var moduleArgs ModuleArgs
+	err = json.Unmarshal(text, &moduleArgs)
+	if err != nil {
+		response.Msg = "Configuration file not valid JSON: " + argsFile
+		FailJSON(response)
+	}
+
+	// Current time as a sane default if none is passed in the module
+	b, err := time.Now().MarshalText()
+	if err != nil {
+		response.Msg = "Failed to marshal current time: " + argsFile
+		FailJSON(response)
+	}
+
+	t := string(b)
+
+	if moduleArgs.Time != "" {
+		t = moduleArgs.Time
+	}
+
+	busy, err := isItBusy(t)
+	if err != nil {
+		response.Msg = "ERROR: " + err.Error() + argsFile
+		FailJSON(response)
+	}
+
+	response.Msg = fmt.Sprintf("The timeslot %v is %v", t, busy)
+	ExitJSON(response)
 }
