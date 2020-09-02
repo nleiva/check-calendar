@@ -1,5 +1,7 @@
 # Check Calendar
 
+![Ansible Lint](https://github.com/nleiva/check-calendar/workflows/Ansible%20Lint/badge.svg)
+
 Simple app to verify whether a timeslot is taken/busy or not from Ansible.
 
 ## Requirements

@@ -4,7 +4,7 @@
   gather_facts: yes
   vars:
     go: false
-  
+
   pre_tasks:
     # Z is the zone designator for the zero UTC offset. 
     - name: Print the time (ISO 8601) - Module input
@@ -12,7 +12,7 @@
         var: ansible_date_time.iso8601
 
   roles:
-    - role: go-role
+    - role: go_role
 
   post_tasks:
     - name: Print out Calendar module output
