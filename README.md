@@ -61,7 +61,14 @@ Execute: `make test-ansible`.
 ...
 ```
 
- Output
+If you are running this during a big event or scheduled maintenance window, the module will return true so you can act accordingly. See this calendar example:
+
+<p align="center">
+  <img title="Calendar" src="static/calendar.png"><br>
+  <br>
+</p>
+
+ The output would look as follows. Notice `"busy": true` or `"msg": "The timeslot 2020-09-02T17:53:43Z is busy: true"`.
 
  ```ruby
 $ make test-ansible
