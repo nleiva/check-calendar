@@ -3,3 +3,9 @@
   include_tasks: "{{ ansible_system }}.yml"
   when: 
     - ansible_architecture == "x86_64"
+    - not go|bool
+
+- name: Test the module (from role)
+  include_tasks: "Go.yml"
+  when: 
+    - go|bool

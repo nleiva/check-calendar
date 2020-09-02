@@ -13,8 +13,11 @@ compile: ## Compile Go code
 test-manual: ## Test module with arguments file
 	@go run *.go args.json
 
-test-ansible: ## Test module with ansible
+test-ansible: ## Test module with Ansible
 	@ansible-playbook test-module.yml
+
+test-go: ## Test module with Ansible and Go
+	@ansible-playbook test-module.yml --extra-vars "go=true"
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

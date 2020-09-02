@@ -1,0 +1,6 @@
+---
+- name: Test the module with Go [{{ ansible_system }}]
+  go_run:
+    name: Testing the Calendar module
+    time: "{{ ansible_date_time.iso8601 }}"
+  register: output

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source $1
+
+if [ -z "$time" ]; then
+     printf '{"busy": false, "changed": false, "failed": true, "msg": "missing required arguments: time"}'
+     exit 1
+ fi
+
+#go run *.go
+printf '{"busy": false, "changed": false, "failed": false, "msg": "%s"}' $time
