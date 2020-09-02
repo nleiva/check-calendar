@@ -14,14 +14,6 @@
   roles:
     - role: go-role
 
-  # tasks:
-  #   - name: Test the module
-  #     calendar:
-  #       name: Testing the Calendar module
-  #       time: "{{ ansible_date_time.iso8601 }}"
-  #       run_once: true
-  #     register: output
-
   post_tasks:
     - name: Print out Calendar module output
       debug:
