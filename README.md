@@ -6,7 +6,7 @@ Simple app to verify whether a timeslot is taken/busy or not from Ansible.
 
 ### Go
 
-If you want to compile the examples, you need Go installed. Otherwise you can use the binarie included for convinience in [here](roles/go-role/library).
+If you want to compile the examples, you need Go installed. Otherwise you can use the binaries included for convenience in [here](roles/go-role/library).
 
 
 ### Google Calendar API
@@ -27,11 +27,11 @@ if err != nil {
 }
 ```
 
-The file `token.json` will be automativally generated once an API Token has been granted. Store this file securely as it will have a refresh token that never expires.
+The file `token.json` will be automatically generated once an API Token has been granted. Store this file securely as it will have a refresh token that never expires.
 
 ## Compiling
 
-To compile your own binatries for multiple target Operating Systems (`GOOS`), run `make compile`. The binaries in this repo were compiled in an `amd64` platform (`GOARCH`).
+To compile your own binaries for multiple target Operating Systems (`GOOS`), run `make compile`. The binaries in this repo were compiled in an `amd64` platform (`GOARCH`).
 
 ## Testing
 
@@ -65,7 +65,6 @@ Execute: `make test-ansible`.
 
  ```ruby
 $ make test-ansible
-ansible-playbook test-module.yml
 [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
 
 PLAY [Test Calendar module] **********************************************************************************************************************************
@@ -75,7 +74,7 @@ ok: [localhost]
 
 TASK [Print the time (ISO 8601) - Module input] **************************************************************************************************************
 ok: [localhost] => {
-    "ansible_date_time.iso8601": "2020-09-02T15:01:54Z"
+    "ansible_date_time.iso8601": "2020-09-02T17:53:43Z"
 }
 
 TASK [go-role : Test the module (from role)] *****************************************************************************************************************
@@ -87,12 +86,13 @@ ok: [localhost]
 TASK [Print out Calendar module output] **********************************************************************************************************************
 ok: [localhost] => {
     "output": {
+        "busy": true,
         "changed": false,
         "failed": false,
-        "msg": "The timeslot 2020-09-02T15:01:54Z is false"
+        "msg": "The timeslot 2020-09-02T17:53:43Z is busy: true"
     }
 }
 
 PLAY RECAP ***************************************************************************************************************************************************
-localhost                  : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+localhost                  : ok=5    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
  ```

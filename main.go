@@ -22,6 +22,7 @@ type ModuleArgs struct {
 // Response are the values returned from the module
 type Response struct {
 	Msg     string `json:"msg"`
+	Busy    bool   `json:"busy"`
 	Changed bool   `json:"changed"`
 	Failed  bool   `json:"failed"`
 }
@@ -90,11 +91,12 @@ func main() {
 	}
 
 	busy, err := isItBusy(t)
+	response.Busy = busy
 	if err != nil {
 		response.Msg = "ERROR: " + err.Error() + argsFile
 		FailJSON(response)
 	}
 
-	response.Msg = fmt.Sprintf("The timeslot %v is %v", t, busy)
+	response.Msg = fmt.Sprintf("The timeslot %v is busy: %v", t, busy)
 	ExitJSON(response)
 }
