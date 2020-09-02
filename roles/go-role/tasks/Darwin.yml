@@ -1,0 +1,6 @@
+---
+- name: Test the module on Mac OS [{{ ansible_system }}]
+  calendar_darwin:
+    name: Testing the Calendar module
+    time: "{{ ansible_date_time.iso8601 }}"
+  register: output

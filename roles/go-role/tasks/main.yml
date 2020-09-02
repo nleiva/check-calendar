@@ -1,0 +1,5 @@
+---
+- name: Test the module (from role)
+  include_tasks: "{{ ansible_system }}.yml"
+  when: 
+    - ansible_architecture == "x86_64"
