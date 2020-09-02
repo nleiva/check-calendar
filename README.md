@@ -1,12 +1,12 @@
 # Check Calendar
 
-Simple app to verify if a timeslot is busy or not.
+Simple app to verify whether a timeslot is taken/busy or not from Ansible.
 
 ## Requirements
 
 ### Go
 
-If you want to compile the examples, you need Go installed. Otherwise you can use the binarie included for convinience in (here)[roles/go-role/librry].
+If you want to compile the examples, you need Go installed. Otherwise you can use the binarie included for convinience in [here](roles/go-role/library).
 
 
 ### Google Calendar API
@@ -18,7 +18,7 @@ You need to [turn on the Google Calendar API](https://developers.google.com/cale
   <br>
 </p>
 
-That is the file we read as `desktop.json` in the code.
+Name this file as `desktop.json`, as we reference it in the code.
 
 ```go
 b, err := ioutil.ReadFile("desktop.json")
@@ -27,7 +27,7 @@ if err != nil {
 }
 ```
 
-The file `token.json` will be automativally generated once an API Token has been granted.
+The file `token.json` will be automativally generated once an API Token has been granted. Store this file securely as it will have a refresh token that never expires.
 
 ## Compiling
 
