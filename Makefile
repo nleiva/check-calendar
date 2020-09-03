@@ -10,8 +10,11 @@ all:
 compile: ## Compile Go code
 	@for target in $(TARGETS); do env GOOS=$$target go build -o roles/go-role/library/calendar_$$target *.go; done
 
-test-manual: ## Test module with arguments file
-	@go run *.go args.json
+test-manual-go: ## Test Go module with arguments file
+	@go run *.go test/args.json
+
+test-manual-bash: ## Test Go module with arguments file via Bash module.
+	@roles/go_role/library/go_run 'test/args.sh'
 
 test-ansible: ## Test module with Ansible
 	@ansible-playbook test-module.yml

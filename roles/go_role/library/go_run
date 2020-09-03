@@ -1,11 +1,31 @@
 #!/bin/bash
 
+file=temp.json
+
+# Ansible will run your module and pass it one argument: the name of a file containing the module arguments you specified in your playbook
+# https://github.com/pmarkham/writing-ansible-modules-in-bash/blob/master/ansible_bash_modules.md
 source $1
 
-if [ -z "$time" ]; then
-     printf '{"busy": false, "changed": false, "failed": true, "msg": "missing required arguments: time"}'
-     exit 1
- fi
+# Name is optional
+if [ -z "$name" ]; then
+     name=Default
+fi
 
-#go run *.go
-printf '{"busy": false, "changed": false, "failed": false, "msg": "%s"}' $time
+# Fail if time is not set or add a sane default
+if [ -z "$time" ]; then
+     time=$(date --iso-8601=seconds)
+     # printf '{"busy": false, "changed": false, "failed": true, "msg": "missing required arguments: time"}'
+     # exit 1
+fi
+
+# Create temp arguments file
+printf '{"Name": "%s", "Time": "%s"}' "$name" "$time" > $file
+
+# Create temp arguments file
+go run *.go $file
+
+# Remove temp arguments file
+rm $file
+
+# This is a return example
+# printf '{"busy": false, "changed": false, "failed": false, "msg": "%s"}' $time
