@@ -17,12 +17,12 @@
       block:
       - name: Read desktop.json
         copy:
-          src: filepath1
+          src: "{{ filepath1 }}"
           dest: ./desktop.json
           mode: '0755'
       - name: Read token.json
         copy:
-          src: filepath2
+          src: "{{ filepath2 }}"
           dest: ./token.json
           mode: '0755'
       when: tower|bool
