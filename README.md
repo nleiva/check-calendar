@@ -49,6 +49,8 @@ Execute `make test-manual`. You need an arguments file named `args.json` with so
 }
 ```
 
+**Note**: Z is the zone designator for the zero UTC offset.
+
 ### From Ansible
 
 Execute: `make test-ansible`.

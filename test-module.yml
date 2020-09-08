@@ -3,13 +3,29 @@
   hosts: localhost
   gather_facts: yes
   vars:
+    # Running this on a machine with Go installed?
     go: false
+    # Running this from tower wit credentials injected?
+    tower: false
 
-  pre_tasks:
-    # Z is the zone designator for the zero UTC offset. 
+  pre_tasks: 
     - name: Print the time (ISO 8601) - Module input
       debug:
         var: ansible_date_time.iso8601
+    
+    - name: Read injected files in Tower
+      block:
+      - name: Read desktop.json
+        copy:
+          src: filepath1
+          dest: ./desktop.json
+          mode: '0755'
+      - name: Read token.json
+        copy:
+          src: filepath2
+          dest: ./token.json
+          mode: '0755'
+      when: tower|bool
 
   roles:
     - role: go_role
