@@ -1,6 +1,6 @@
 ---
 - name: Test Calendar module
-  hosts: localhost
+  hosts: '{{ my_devices | default("localhost") }}'
   gather_facts: yes
   vars:
     # Running this on a machine with Go installed?
